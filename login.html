@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Latihan Auth Firebase Web</title>
+</head>
+<body>
+<header>Latihan Auth Firebase Wieb</header>
+<main>
+	<section>
+		<form>
+			<label>Email</label>
+			<input type="text" id="email" required="" placeholder="ex : user@example.com">
+			<br>
+			<label>Password</label>
+			<input type="password" id="password" required="" placeholder="password">
+			<br>
+			<button id="btn_signup">Sign Up</button>
+			<button id="btn_signin">Sign In</button>
+      <br>
+      <br>
+		</form>
+      <button id="btn_signin_google">Sign in with Google</button>
+	</section>
+</main>
+<footer>Latihan 2018 | Nurul Muttaqin</footer>
+
+
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<!-- Firebase App is always required and must be first -->
+<script src="https://www.gstatic.com/firebasejs/5.5.2/firebase-app.js"></script>
+<!--<script src="https://www.gstatic.com/firebasejs/5.7.0/firebase.js"></script>-->
+	
+
+<!-- Add additional services that you want to use -->
+<script src="https://www.gstatic.com/firebasejs/5.5.2/firebase-auth.js"></script>
+<!--
+<script src="https://www.gstatic.com/firebasejs/5.5.2/firebase-database.js"></script>
+<script src="https://www.gstatic.com/firebasejs/5.5.2/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/5.5.2/firebase-messaging.js"></script>
+<script src="https://www.gstatic.com/firebasejs/5.5.2/firebase-functions.js"></script>
+-->
+<script type="text/javascript">
+	//document.getElementById("signOut").style.display = "none";
+var config = {
+    apiKey: "AIzaSyCK0t4BscgFGOqAqqNVQuwROpdYKmaZeVo",
+    authDomain: "developerkejar.firebaseapp.com",
+    databaseURL: "https://developerkejar.firebaseio.com",
+    projectId: "developerkejar",
+    storageBucket: "developerkejar.appspot.com",
+    messagingSenderId: "759578895166"
+  };
+ firebase.initializeApp(config);
+ const auth = firebase.auth();
+ var providerGoogle = new firebase.auth.GoogleAuthProvider();
+
+      auth.onAuthStateChanged(function(cek_user) {
+        if (cek_user) {
+          var user = firebase.auth().currentUser;
+          var email= user.email;
+          var emailVerified = user.emailVerified;
+          //console.log("verifikasi " + user.emailVerified);
+          if (!emailVerified) {
+            console.log("Belum Terverifikasi");
+          } else {
+            console.log("Sudah Terverifikasi");
+            document.location = "index.html";
+          }
+          if (user){
+            console.log("User ada " + user.email);
+          }else{
+            console.log("User Tidak ada");
+          }
+        } else {
+          console.log("not sign in");
+        }
+      });
+
+      $( "#btn_signin" ).click(function(e) {
+      	e.preventDefault();
+
+      	var email = $('#email').val();
+      	var password = $('#password').val();
+
+      	firebase.auth().signInWithEmailAndPassword(email, password).then(function (){
+          console.log("LOgin sukses");
+          alert("Sign In Sukses");
+          document.location = "index.html";
+        }).catch(function(error) {
+      		var errorCode = error.code;
+      		var errorMessage = error.message;
+      		console.log(errorCode, errorMessage);
+      	});
+      });
+
+
+
+
+      $("#btn_signup" ).click(function(e) {
+      	e.preventDefault();
+
+      	var email = $('#email').val();
+      	var password = $('#password').val();
+      	auth.createUserWithEmailAndPassword(email, password).then(function () {
+      		console.log("Sign Up Suksess");
+      		var user = auth.currentUser;
+      		user.sendEmailVerification().then(function() {
+      			alert("Verification Email, Please check your email to verify your account");
+      			//logout();
+      		}, function(error) {
+      			alert( "Oops, Verification email not send");
+      		});
+      	}).catch(function(error) {
+      		var errorCode = error.code;
+      		var errorMessage = error.message;
+      		console.log(errorCode, errorMessage);
+      	});
+      });
+
+
+      $("#btn_signin_google").click(function(e) {
+        e.preventDefault();
+
+        auth.signInWithPopup(providerGoogle).then(result => {
+          var token = result.credential.accessToken;
+          var user = result.user;
+
+          alert("Login dengan akun : " + user.displayName);
+          document.location = "index.html";
+          
+          console.log(token);
+          console.log(user);
+        }).catch(error => {
+          var errorCode = error.code;
+          var errorMessage = error.message;
+
+          console.log(errorCode);
+          console.log(errorMessage);
+        });
+      });
+
+
+      function logout(){
+      	firebase.auth().signOut().then(function() {
+      		console.log("sign out berhasil");
+      		alert("sign out berhasil");
+      	}).catch(function(error) {
+      		alert( "Oops  Something went wrong!  error");
+      	});
+      }
+</script>
+</body>
+</html>

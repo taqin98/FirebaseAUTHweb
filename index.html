@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Latihan Auth Firebase Web</title>
+</head>
+<body>
+<header>Latihan Auth Firebase Wieb</header>
+<main>
+	<section>
+		<h3>Berhasil Login</h3>
+		<p id="akun"></p>
+		<button onclick="logout()">Sign Out</button>
+
+	</section>
+</main>
+<footer>Latihan 2018 | Nurul Muttaqin</footer>
+
+
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<!-- Firebase App is always required and must be first -->
+<script src="https://www.gstatic.com/firebasejs/5.5.2/firebase-app.js"></script>
+<!--<script src="https://www.gstatic.com/firebasejs/5.7.0/firebase.js"></script>-->
+	
+
+<!-- Add additional services that you want to use -->
+<script src="https://www.gstatic.com/firebasejs/5.5.2/firebase-auth.js"></script>
+<!--
+<script src="https://www.gstatic.com/firebasejs/5.5.2/firebase-database.js"></script>
+<script src="https://www.gstatic.com/firebasejs/5.5.2/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/5.5.2/firebase-messaging.js"></script>
+<script src="https://www.gstatic.com/firebasejs/5.5.2/firebase-functions.js"></script>
+-->
+<script type="text/javascript">
+	//document.getElementById("signOut").style.display = "none";
+var config = {
+    apiKey: "AIzaSyCK0t4BscgFGOqAqqNVQuwROpdYKmaZeVo",
+    authDomain: "developerkejar.firebaseapp.com",
+    databaseURL: "https://developerkejar.firebaseio.com",
+    projectId: "developerkejar",
+    storageBucket: "developerkejar.appspot.com",
+    messagingSenderId: "759578895166"
+  };
+ firebase.initializeApp(config);
+ const auth = firebase.auth();
+ //document.getElementById('btn_signup').addEventListener('click', handleSignUp, false);
+
+ 	//var email = document.getElementById('email').value;
+ 	//var password = document.getElementById('password').value;
+
+      //document.getElementById('btn_signup').addEventListener('click', handleSignUp);
+
+
+      auth.onAuthStateChanged(function(cek_user) {
+      	if (cek_user) {
+      		var user = firebase.auth().currentUser;
+      		var email= user.email;
+      		var emailVerified = user.emailVerified;
+      		//console.log("verifikasi " + user.emailVerified);
+      		if (!emailVerified) {
+      			console.log("User Belum Terverifikasi");
+      			alert("Cek email Anda");
+      		} else {
+      			console.log("User Sudah Terverifikasi");
+      		}
+      		if (user){
+      			console.log("User ada " + user.email);
+
+      			document.getElementById("akun").innerHTML = "Akun saat ini : " + user.email;
+      		}else{
+      			console.log("User Tidak ada");
+      		}
+      	} else {
+      		console.log("not sign in");
+      		alert("Not Sign In");
+      		document.location = "login.html";
+      	}
+      });
+
+
+
+      function logout(){
+      	firebase.auth().signOut().then(function() {
+      		console.log("sign out berhasil");
+      		alert("sign out berhasil");
+      		document.location = "login.html";
+      	}).catch(function(error) {
+      		alert( "Oops  Something went wrong!  error");
+      	});
+      }
+
+</script>
+</body>
+</html>
